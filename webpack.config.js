@@ -1,5 +1,5 @@
 const path = require("path");
-const {CleanWebpackPlugin} = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -8,7 +8,6 @@ const isProd = process.env.NODE_ENV === "production";
 const isDev = !isProd;
 
 const filename = (ext) => (isDev ? `bundle.${ext}` : `bundle.[hash].${ext}`);
-
 
 module.exports = {
   context: path.resolve(__dirname, "src"),
@@ -31,12 +30,9 @@ module.exports = {
     hot: isDev,
   },
   plugins: [
-    new ESLintPlugin({
-      context: path.resolve(__dirname, "src"),
-    }),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: "index.html",
+      template: path.resolve(__dirname, 'index.html'),
       minify: {
         removeComments: isProd,
         collapseWhitespace: isProd,
@@ -53,6 +49,9 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: filename("css"),
     }),
+    new ESLintPlugin({
+        context: path.resolve(__dirname, "src"),
+      }),
   ],
   module: {
     rules: [
@@ -62,7 +61,7 @@ module.exports = {
       },
       {
         test: /\.m?js$/,
-        exclude: /node_modules/,
+        exclude: [/node_modules/],
         use: {
           loader: "babel-loader",
           options: {
@@ -71,5 +70,8 @@ module.exports = {
         },
       },
     ],
+  },
+  stats: {
+    children: true,
   },
 };
